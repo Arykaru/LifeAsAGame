@@ -121,7 +121,7 @@ namespace App1
         public void CompositionSelected(string compositionName)
         {
             CompositionName = compositionName;
-            CurrentSong = $"{BackendUrl}api/values?songName={HttpUtility.UrlEncode(compositionName)}";
+            CurrentSong = $"{BackendUrl}values/Get?songName={HttpUtility.UrlEncode(compositionName)}";
 
             //CurrentSong = "http://z1.fm//download/21812823";
             PlaySong(CurrentSong);
