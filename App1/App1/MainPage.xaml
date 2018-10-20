@@ -17,15 +17,22 @@
         </Grid.ColumnDefinitions>
         <!-- Place new controls here -->
         <Label Grid.Row="1"
-            Text="LIFE IS A GAME OF MUSIC" 
-           FontSize="30"
+            Text="ListenIn" 
+           FontSize="50"
+               FontAttributes="Bold"
            HorizontalOptions="Center"
            VerticalOptions="CenterAndExpand" />
-        <Image Grid.Row="2"
+        <Label Grid.Row="2"
+               Text="life is like gaming when your music is playing" 
+               FontSize="30"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"
+               VerticalOptions="CenterAndExpand" />
+        <Image Grid.Row="3"
             WidthRequest="50"
             HeightRequest="50"
             Source="https://www.picpng.com/images/large/music-cd-dvd-note-audio-disc-photos-115218"></Image>
-        <Button Grid.Row="3" Text="LOGIN" WidthRequest="200" FontSize="Large" HeightRequest="100" BackgroundColor="Gray" HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_OnClicked"></Button>
+        <Button Grid.Row="4" Text="LOGIN" WidthRequest="200" FontSize="Large" HeightRequest="100" BackgroundColor="Gainsboro" HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_OnClicked"></Button>
     </Grid>
 
 </ContentPage>
