@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:App1"
              x:Class="App1.MainPage">
 
-    <Grid>
+    <Grid BackgroundColor="Orange">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
@@ -25,7 +25,7 @@
             WidthRequest="50"
             HeightRequest="50"
             Source="https://www.picpng.com/images/large/music-cd-dvd-note-audio-disc-photos-115218"></Image>
-        <Button Grid.Row="3" Text="LOGIN" WidthRequest="150" HeightRequest="100" BackgroundColor="DarkCyan" HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_OnClicked"></Button>
+        <Button Grid.Row="3" Text="LOGIN" WidthRequest="200" FontSize="Large" HeightRequest="100" BackgroundColor="Gray" HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_OnClicked"></Button>
     </Grid>
 
 </ContentPage>
