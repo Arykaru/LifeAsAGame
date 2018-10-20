@@ -1,7 +1,12 @@
-﻿using Plugin.MediaManager;
+﻿using System;
+using Plugin.MediaManager;
 using System.ComponentModel;
 using System.Windows.Input;
+using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
 using Xamarin.Forms;
+using Xamarin.Forms.GoogleMaps;
+using Position = Xamarin.Forms.GoogleMaps.Position;
 
 namespace App1
 {
@@ -11,6 +16,9 @@ namespace App1
 
         public ICommand ImageTapCommand { get; set; }
         public string CurrentSong = "";
+        public Map Map;
+        public Pin MePin;
+        IGeolocator locator = CrossGeolocator.Current;
 
         private const string PlayImage =
             "https://cdn4.iconfinder.com/data/icons/media-player-icons/80/Media_player_icons-12-512.png";
@@ -45,6 +53,20 @@ namespace App1
             ImageTapCommand = new Command(CmdTapImage);
         }
 
+        public async void InitLocationSubscription()
+        {
+            var position = await locator.GetPositionAsync(TimeSpan.FromSeconds(10));
+            MoveMeInMap(position.Latitude, position.Longitude);
+            locator.PositionChanged += (sender, e) => {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    var pos = e.Position;
+                    CompositionName = $"{pos.Latitude} AND {pos.Longitude}";
+                    MoveMeInMap(pos.Latitude, pos.Longitude);
+                });
+            };
+            await locator.StartListeningAsync(TimeSpan.FromSeconds(1), 1);
+        }
 
         private void CmdTapImage()
         {
@@ -73,6 +95,29 @@ namespace App1
         {
             await CrossMediaManager.Current.Play(filePath);
             ImagePath = StopImage;
+        }
+
+        private void MoveMeInMap(double latitude, double longitude)
+        {
+            Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(latitude, longitude),
+                Distance.FromMeters(50)));
+
+            var mePin = MePin;
+            if (mePin == null)
+            {
+                var pin = new Pin
+                {
+                    Type = PinType.Place,
+                    Position = new Position(latitude, longitude),
+                    Label = "You"
+                };
+                MePin = pin;
+                Map.Pins.Add(pin);
+            }
+            else
+            {
+                mePin.Position = new Position(latitude, longitude);
+            }
         }
     }
 }
