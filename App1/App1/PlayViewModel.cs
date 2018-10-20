@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Plugin.MediaManager;
+using System.ComponentModel;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -9,6 +10,7 @@ namespace App1
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand ImageTapCommand { get; set; }
+        public string CurrentSong = "";
 
         private const string PlayImage =
             "https://cdn4.iconfinder.com/data/icons/media-player-icons/80/Media_player_icons-12-512.png";
@@ -46,12 +48,31 @@ namespace App1
 
         private void CmdTapImage()
         {
-            ImagePath = ImagePath == PlayImage ? StopImage : PlayImage;
+            var isPlaying = ImagePath == StopImage;
+            ImagePath = isPlaying ? PlayImage : StopImage; 
+            if (isPlaying)
+            {
+                CrossMediaManager.Current.Pause();
+            }
+            else
+            {
+                CrossMediaManager.Current.Play(CurrentSong);
+            }
         }
 
         public void CompositionSelected(string compositionName)
         {
             CompositionName = compositionName;
+            CurrentSong = "" + CurrentSong;
+
+            CurrentSong = "http://z1.fm//download/21812823";
+            PlaySong(CurrentSong);
+        }
+
+        private async void PlaySong(string filePath)
+        {
+            await CrossMediaManager.Current.Play(filePath);
+            ImagePath = StopImage;
         }
     }
 }
