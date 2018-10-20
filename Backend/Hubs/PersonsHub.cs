@@ -11,6 +11,11 @@ namespace Backend.Hubs
             await this.Clients.All.SendAsync("Send", message);
         }
 
+        public override Task OnConnectedAsync()
+        {
+            return base.OnConnectedAsync();
+        }
+
         [HubMethodName("PersonMoved")]
         public void PersonMoved(double latitude, double longitude)
         {

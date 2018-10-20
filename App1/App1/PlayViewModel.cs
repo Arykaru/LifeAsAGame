@@ -1,6 +1,7 @@
 ﻿using System;
 using Plugin.MediaManager;
 using System.ComponentModel;
+using System.Web;
 using System.Windows.Input;
 using Microsoft.AspNet.SignalR.Client;
 using Models;
@@ -24,7 +25,7 @@ namespace App1
         public Map Map;
         public Pin MePin;
         IGeolocator locator = CrossGeolocator.Current;
-        private const string BackendUrl = "http://169.254.80.80:54810/";
+        private const string BackendUrl = "http://a1e61880.ngrok.io/";
 
         private const string PlayImage =
             "https://cdn4.iconfinder.com/data/icons/media-player-icons/80/Media_player_icons-12-512.png";
@@ -109,7 +110,7 @@ namespace App1
             ImagePath = isPlaying ? PlayImage : StopImage; 
             if (isPlaying)
             {
-                CrossMediaManager.Current.Pause();
+                CrossMediaManager.Current.Stop();
             }
             else
             {
@@ -120,9 +121,9 @@ namespace App1
         public void CompositionSelected(string compositionName)
         {
             CompositionName = compositionName;
-            CurrentSong = "" + CurrentSong;
+            CurrentSong = $"{BackendUrl}api/values?songName={HttpUtility.UrlEncode(compositionName)}";
 
-            CurrentSong = "http://z1.fm//download/21812823";
+            //CurrentSong = "http://z1.fm//download/21812823";
             PlaySong(CurrentSong);
         }
 
