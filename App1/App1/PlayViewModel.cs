@@ -2,6 +2,8 @@
 using Plugin.MediaManager;
 using System.ComponentModel;
 using System.Windows.Input;
+using Microsoft.AspNet.SignalR.Client;
+using Models;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Xamarin.Forms;
@@ -14,11 +16,15 @@ namespace App1
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        HubConnection chatConnection;
+        IHubProxy SignalRChatHub;
+
         public ICommand ImageTapCommand { get; set; }
         public string CurrentSong = "";
         public Map Map;
         public Pin MePin;
         IGeolocator locator = CrossGeolocator.Current;
+        private const string BackendUrl = "http://169.254.80.80:54810/";
 
         private const string PlayImage =
             "https://cdn4.iconfinder.com/data/icons/media-player-icons/80/Media_player_icons-12-512.png";
@@ -51,6 +57,35 @@ namespace App1
         public PlayViewModel()
         {
             ImageTapCommand = new Command(CmdTapImage);
+            InitSignalr();
+        }
+
+        private void InitSignalr()
+        {
+            chatConnection = new HubConnection(BackendUrl);
+            SignalRChatHub = chatConnection.CreateHubProxy("PersonsHub");
+
+            SignalRChatHub.On<object>("newPersonConnected", message =>
+            {
+                if (message != null)
+                {
+                    var model = message;
+                }
+            });
+
+            JoinSignal();
+        }
+
+        public async virtual void JoinSignal()
+        {
+            try
+            {
+                await chatConnection.Start();
+            }
+            catch (Exception)
+            {
+                // Do some error handling.
+            }
         }
 
         public async void InitLocationSubscription()

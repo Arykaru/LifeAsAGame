@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Backend.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -35,6 +37,10 @@ namespace Backend
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<PersonsHub>("/personshub");
+            });
             app.UseMvc();
         }
     }
