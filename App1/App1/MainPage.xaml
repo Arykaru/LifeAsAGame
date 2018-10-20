@@ -32,7 +32,7 @@
             WidthRequest="50"
             HeightRequest="50"
             Source="https://www.picpng.com/images/large/music-cd-dvd-note-audio-disc-photos-115218"></Image>
-        <Button Grid.Row="4" Text="LOGIN" WidthRequest="200" FontSize="Large" HeightRequest="100" BackgroundColor="Gainsboro" HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_OnClicked"></Button>
+        <Button Grid.Row="4" Text="Start" WidthRequest="200" FontSize="Large" HeightRequest="75" BackgroundColor="Gainsboro" HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_OnClicked"></Button>
     </Grid>
 
 </ContentPage>

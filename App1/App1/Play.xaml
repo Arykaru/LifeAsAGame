@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:googleMaps="clr-namespace:Xamarin.Forms.GoogleMaps;assembly=Xamarin.Forms.GoogleMaps"
              x:Class="App1.Play" BackgroundColor="Orange">
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -28,8 +29,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.1*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="0.05*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="0.15*"></RowDefinition>
+                <RowDefinition Height="0.25*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
@@ -37,8 +39,9 @@
             <Label Grid.Row="0" Text="PLAYLIST" HorizontalOptions="Center" FontSize="Large" VerticalOptions="Center" />
             <ListView Grid.Row="1"  x:Name="songsList" ItemsSource="{StaticResource Key=songs}" ItemSelected="SongsList_OnItemSelected">
             </ListView>
-            <Label Grid.Row="2" Text="{Binding CompositionName}" FontAttributes="Bold" Margin="5"/>
-            <Image Grid.Row="3" Source="{Binding ImagePath}" BackgroundColor="DarkOrange" Margin="5">
+            <googleMaps:Map Grid.Row="2" x:Name="map" VerticalOptions="FillAndExpand" />
+            <Label Grid.Row="3" Text="{Binding CompositionName}" FontAttributes="Bold" Margin="5"/>
+            <Image Grid.Row="4" Source="{Binding ImagePath}" BackgroundColor="DarkOrange" Margin="5">
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding ImageTapCommand}" />
                 </Image.GestureRecognizers>
