@@ -13,10 +13,25 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="PLAYLIST" HorizontalOptions="Center" FontSize="Large" />
-            <ListView x:Name="songsList" ItemsSource="{StaticResource Key=songs}" ItemSelected="SongsList_OnItemSelected">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="0.05*"></RowDefinition>
+                <RowDefinition Height="0.15*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Text="PLAYLIST" HorizontalOptions="Center" FontSize="Large" VerticalOptions="Center" />
+            <ListView Grid.Row="1"  x:Name="songsList" ItemsSource="{StaticResource Key=songs}" ItemSelected="SongsList_OnItemSelected">
             </ListView>
-        </StackLayout>
+            <Label Grid.Row="2" Text="{Binding CompositionName}" FontAttributes="Bold" Margin="5"/>
+            <Image Grid.Row="3" Source="{Binding ImagePath}" BackgroundColor="DarkOrange" Margin="5">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ImageTapCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>
