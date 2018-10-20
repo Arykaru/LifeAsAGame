@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows.Input;
-using Xamarin.Forms;
-using Xamarin.Forms.GoogleMaps;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace App1
@@ -17,8 +13,26 @@ namespace App1
 		    BindingContext = new PlayViewModel();
             viewModel = BindingContext;
 		    (viewModel as PlayViewModel).Map = map;
-		    (viewModel as PlayViewModel).InitLocationSubscription();
-		}
+
+		    Device.BeginInvokeOnMainThread(() =>
+		    {
+		        (viewModel as PlayViewModel).InitLocationSubscription();
+            });
+            
+
+		    (viewModel as PlayViewModel).PlaySongAsked += delegate(object sender, string s)
+		    {
+		        Device.BeginInvokeOnMainThread(async () =>
+		        {
+		            bool result = await DisplayAlert("New friend", "Let's listen music together", "OK", "NO");
+		            if (result)
+		            {
+		                (viewModel as PlayViewModel).CompositionSelected(s);
+		            }
+		        });
+		    };
+
+        }
 
 	    private void SongsList_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
 	    {

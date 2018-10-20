@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Plugin.MediaManager;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Input;
 using Microsoft.AspNet.SignalR.Client;
@@ -16,7 +18,8 @@ namespace App1
     public class PlayViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
+          
+        public event EventHandler<string> PlaySongAsked;
         HubConnection chatConnection;
         IHubProxy SignalRChatHub;
 
@@ -61,26 +64,68 @@ namespace App1
             InitSignalr();
         }
 
-        private void InitSignalr()
+        private Dictionary<string, Pin> _persons = new Dictionary<string, Pin>();
+
+
+        private async Task InitSignalr()
         {
             chatConnection = new HubConnection(BackendUrl);
             SignalRChatHub = chatConnection.CreateHubProxy("PersonsHub");
 
-            SignalRChatHub.On<object>("newPersonConnected", message =>
+            SignalRChatHub.On<PersoneMovedModel>("newPersonConnected", message =>
             {
                 if (message != null)
                 {
-                    var model = message;
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+
+                        Pin pin;
+                        if (_persons.TryGetValue(message.ConnectionId, out pin))
+                        {
+                            pin.Position = new Position(message.Latitude, message.Longitude);
+                        }
+                        else
+                        {
+                            pin = new Pin
+                            {
+                                Type = PinType.Place,
+                                Position = new Position(message.Latitude, message.Longitude),
+                                Label = "Friend",
+
+                            };
+                            pin.Tag = message.ConnectionId;
+                            pin.Clicked += PinOnClicked;
+                            Map.Pins.Add(pin);
+                            _persons.Add(message.ConnectionId, pin);
+
+                        }
+                    });
                 }
             });
 
-            JoinSignal();
+            SignalRChatHub.On<string>("playit", message =>
+            {
+                PlaySongAsked?.Invoke(this, message);
+            });
+
+                
+
+            await JoinSignal();
         }
 
-        public async virtual void JoinSignal()
+
+        private async void PinOnClicked(object sender, EventArgs e)
+        {
+            var pin = sender as Pin;
+            await SignalRChatHub.Invoke("LetsFriends", pin.Tag as string, CompositionName
+            );
+        }
+
+        public async Task JoinSignal()
         {
             try
             {
+
                 await chatConnection.Start();
             }
             catch (Exception)
@@ -93,7 +138,8 @@ namespace App1
         {
             var position = await locator.GetPositionAsync(TimeSpan.FromSeconds(10));
             MoveMeInMap(position.Latitude, position.Longitude);
-            locator.PositionChanged += (sender, e) => {
+            locator.PositionChanged += (sender, e) =>
+            {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     var pos = e.Position;
@@ -107,7 +153,7 @@ namespace App1
         private void CmdTapImage()
         {
             var isPlaying = ImagePath == StopImage;
-            ImagePath = isPlaying ? PlayImage : StopImage; 
+            ImagePath = isPlaying ? PlayImage : StopImage;
             if (isPlaying)
             {
                 CrossMediaManager.Current.Stop();
@@ -120,10 +166,10 @@ namespace App1
 
         public void CompositionSelected(string compositionName)
         {
-            CompositionName = compositionName;
-            CurrentSong = $"{BackendUrl}values/Get?songName={HttpUtility.UrlEncode(compositionName)}";
+            CompositionName = "default";
+            //CurrentSong = $"{BackendUrl}values/Get?songName={HttpUtility.UrlEncode(compositionName)}";
 
-            //CurrentSong = "http://z1.fm//download/21812823";
+            CurrentSong = "http://z1.fm//download/21812823";
             PlaySong(CurrentSong);
         }
 
@@ -133,7 +179,7 @@ namespace App1
             ImagePath = StopImage;
         }
 
-        private void MoveMeInMap(double latitude, double longitude)
+        private async void MoveMeInMap(double latitude, double longitude)
         {
             Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(latitude, longitude),
                 Distance.FromMeters(50)));
@@ -153,6 +199,11 @@ namespace App1
             else
             {
                 mePin.Position = new Position(latitude, longitude);
+            }
+
+            if (chatConnection.State == ConnectionState.Connected)
+            {
+                await SignalRChatHub.Invoke("PersonMoved", latitude = mePin.Position.Latitude, longitude = mePin.Position.Longitude);
             }
         }
     }

@@ -20,12 +20,18 @@ namespace Old.Hubs
         [HubMethodName("PersonMoved")]
         public void PersonMoved(double latitude, double longitude)
         {
-            Clients.Others.SendCoreAsync("newPersonConnected", new[] {new PersoneMovedModel
+            Clients.Others.newPersonConnected(new PersoneMovedModel
             {
                 ConnectionId = Context.ConnectionId,
                 Latitude = latitude,
                 Longitude = longitude
-            }});
+            });
+        }
+
+        [HubMethodName("LetsFriends")]
+        public void LetsFriends(string connectionId, string songName)
+        {
+            Clients.Client(connectionId).playit(songName);
         }
     }
 }
